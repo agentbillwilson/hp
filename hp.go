@@ -16,13 +16,14 @@ func XP(lvl int) int {
 	return sum / 4
 }
 
-var lvls = make([]int, 100)
+const usage = `usage: hp -h xp \
+[-a xp] [-s xp] [-d xp] [-r xp] \
+[-A level] [-S level] [-D level] [-R level]
 
-func init() {
-	for lvl := 1; lvl < 100; lvl++ {
-		lvls[lvl] = XP(lvl)
-	}
-}
+hp estimates the Hitpoints level achieved from obtaining other combat levels in
+Old School RuneScape. -a, -s, -d, and -r specify the Attack, Strength, Defence,
+and Ranged experience points to begin with, respectively. -A, -S, -D, and -R
+specify the target Attack, Strength, Defence, and Ranged levels, respectively.`
 
 func main() {
 	hp := flag.Int("h", 0, "Hitpoints XP")
@@ -34,27 +35,30 @@ func main() {
 	strLvl := flag.Int("S", 0, "target Strength level")
 	defLvl := flag.Int("D", 0, "target Defence level")
 	rngLvl := flag.Int("R", 0, "target Ranged level")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, usage)
+	}
 	flag.Parse()
 	if *hp == 0 {
 		flag.Usage()
 		os.Exit(1)
 	}
 	xpTotal := 0
-	if *atkLvl != 0 {
-		xpTotal += lvls[*atkLvl] - *atk
+	if xp := XP(*atkLvl) - *atk; xp > 0 {
+		xpTotal += xp
 	}
-	if *strLvl != 0 {
-		xpTotal += lvls[*strLvl] - *str
+	if xp := XP(*strLvl) - *str; xp > 0 {
+		xpTotal += xp
 	}
-	if *defLvl != 0 {
-		xpTotal += lvls[*defLvl] - *def
+	if xp := XP(*defLvl) - *def; xp > 0 {
+		xpTotal += xp
 	}
-	if *rngLvl != 0 {
-		xpTotal += lvls[*rngLvl] - *rng
+	if xp := XP(*rngLvl) - *rng; xp > 0 {
+		xpTotal += xp
 	}
 	*hp += xpTotal * 3 / 4
 	hpLvl := 0
-	for lvl := 10; lvls[lvl] <= *hp; lvl++ {
+	for lvl := 10; XP(lvl) <= *hp; lvl++ {
 		hpLvl = lvl
 	}
 	fmt.Println(hpLvl)
