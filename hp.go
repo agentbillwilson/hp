@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -10,16 +9,17 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 )
 
-type Skill int
+type skill int
 
 const (
-	Attack Skill = iota + 1
-	Defence
-	Strength
-	Hitpoints
-	Ranged
+	attack skill = iota + 1
+	defence
+	strength
+	hitpoints
+	ranged
 )
 
 // XP returns the experience points necessary to achieve level.
@@ -61,12 +61,12 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-	xp := map[Skill]int{
-		Attack:    *atk,
-		Strength:  *str,
-		Defence:   *def,
-		Hitpoints: *hp,
-		Ranged:    *rng,
+	xp := map[skill]int{
+		attack:    *atk,
+		strength:  *str,
+		defence:   *def,
+		hitpoints: *hp,
+		ranged:    *rng,
 	}
 	if *name != "" {
 		u, err := url.Parse("https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws")
@@ -85,7 +85,7 @@ func main() {
 		if _, err := r.Read(); err != nil {
 			log.Fatal(err)
 		}
-		for skill := Attack; skill <= Ranged; skill++ {
+		for skill := attack; skill <= ranged; skill++ {
 			record, err := r.Read()
 			if err != nil {
 				log.Fatal(err)
@@ -96,15 +96,15 @@ func main() {
 			}
 		}
 	}
-	levels := map[Skill]int{
-		Attack:    *atkLvl,
-		Defence:   *defLvl,
-		Strength:  *strLvl,
-		Ranged:    *rngLvl,
+	levels := map[skill]int{
+		attack:   *atkLvl,
+		defence:  *defLvl,
+		strength: *strLvl,
+		ranged:   *rngLvl,
 	}
-	newXP := 0
-	for skill := Attack; skill <= Ranged; skill++ {
-		if skill == Hitpoints {
+	combatXP := 0
+	for skill := attack; skill <= ranged; skill++ {
+		if skill == hitpoints {
 			continue
 		}
 		lvl := levels[skill]
@@ -112,9 +112,9 @@ func main() {
 			continue
 		}
 		if xp := XP(lvl) - xp[skill]; xp > 0 {
-			newXP += xp
+			combatXP += xp
 		}
 	}
-	*hp = xp[Hitpoints] + (newXP * 3 / 4)
+	*hp = xp[hitpoints] + (combatXP * 3 / 4)
 	fmt.Println(*hp)
 }
