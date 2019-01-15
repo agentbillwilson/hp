@@ -115,6 +115,6 @@ func main() {
 			combatXP += xp
 		}
 	}
-	*hp = xp[hitpoints] + (combatXP * 3 / 4)
+	*hp = xp[hitpoints] + (combatXP / 3)
 	fmt.Println(*hp)
 }
