@@ -68,7 +68,6 @@ func main() {
 		Ranged:    *rng,
 	}
 	if *name != "" {
-		fmt.Println(*name)
 		u, err := url.Parse("https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws")
 		if err != nil {
 			log.Fatal(err)
@@ -76,7 +75,6 @@ func main() {
 		v := url.Values{}
 		v.Set("player", *name)
 		u.RawQuery = v.Encode()
-		fmt.Println(u.String())
 		res, err := http.Get(u.String())
 		if err != nil {
 			log.Fatal(err)
