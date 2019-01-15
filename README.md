@@ -1,7 +1,7 @@
 hp
 ==
 
-Estimates Hitpoints level from combat XP in Old School RuneScape
+Estimates Hitpoints XP from combat XP in Old School RuneScape
 
 Building
 --------
